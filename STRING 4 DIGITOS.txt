@@ -1,0 +1,11 @@
+char input[5]; // criar um array de caracteres com tamanho 5 (4 caracteres + 1 caractere nulo)
+
+Serial.println("Digite uma string de até 4 caracteres:");
+fgets(input, 5, stdin); // ler a entrada do usuário com no máximo 4 caracteres e incluir o caractere nulo automaticamente
+
+String str(input); // criar uma string a partir do array de caracteres
+
+str = str.substring(0, 4); // limitar a string a apenas 4 caracteres
+
+Serial.print("A string digitada foi: ");
+Serial.println(str); // imprimir a string limitada

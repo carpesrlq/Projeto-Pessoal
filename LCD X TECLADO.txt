@@ -1,0 +1,75 @@
+#include <Wire.h>  // Biblioteca para comunicação I2C
+#include <LiquidCrystal_I2C.h>  // Biblioteca para controlar o display LCD com módulo I2C
+#include <Keypad.h>  // Biblioteca para controlar o teclado 4x4
+
+// Definir o endereço do display LCD com módulo I2C
+#define LCD_ADDRESS 0x27
+
+// Definir o número de colunas e linhas do display LCD
+#define LCD_COLUMNS 16
+#define LCD_ROWS 2
+
+// Definir o número de colunas e linhas do teclado 4x4
+#define KEYPAD_COLUMNS 4
+#define KEYPAD_ROWS 4
+
+// Definir os pinos utilizados para o teclado 4x4
+const byte KEYPAD_ROWS_PINS[KEYPAD_ROWS] = {9, 8, 7, 6};
+const byte KEYPAD_COLUMNS_PINS[KEYPAD_COLUMNS] = {5, 4, 3, 2};
+
+// Definir a matriz de caracteres do teclado 4x4
+const char KEYPAD_CHARACTERS[KEYPAD_ROWS][KEYPAD_COLUMNS] = {
+  {'1', '2', '3', 'A'},
+  {'4', '5', '6', 'B'},
+  {'7', '8', '9', 'C'},
+  {'*', '0', '#', 'D'}
+};
+
+// Definir a senha a ser verificada
+const char PASSWORD[] = "1234";
+
+// Variáveis globais
+LiquidCrystal_I2C lcd(LCD_ADDRESS, LCD_COLUMNS, LCD_ROWS);  // Objeto para controlar o display LCD
+Keypad keypad = Keypad(makeKeymap(KEYPAD_CHARACTERS), KEYPAD_ROWS_PINS, KEYPAD_COLUMNS_PINS, KEYPAD_ROWS, KEYPAD_COLUMNS);  // Objeto para controlar o teclado 4x4
+char input[5] = "";  // Array para armazenar a entrada do teclado
+
+void setup() {
+  // Inicializar o display LCD
+  lcd.init();
+  lcd.backlight();
+
+  // Exibir mensagem de boas-vindas
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Digite a senha:");
+}
+
+void loop() {
+  // Ler o próximo botão pressionado no teclado
+  char key = keypad.getKey();
+
+  // Verificar se um botão foi pressionado
+  if (key) {
+    // Adicionar o botão pressionado à entrada
+    strcat(input, &key);
+
+    // Exibir a entrada no display LCD
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("Senha:");
+    lcd.setCursor(0, 1);
+    lcd.print(input);
+
+    // Verificar se a entrada está completa
+    if (strlen(input) == strlen(PASSWORD)) {
+      // Verificar se a entrada é igual à senha
+      if (strcmp(input, PASSWORD) == 0) {
+        // Senha correta: exibir mensagem de sucesso
+        lcd.clear();
+        lcd.setCursor(0, 0);
+        lcd.print("Senha correta!");
+        delay(2000);
+        lcd.clear();
+        lcd.setCursor(0, 0);
+        lcd.print("Digite a senha:");
+        memset(input, 0, sizeof(input));  // Lim

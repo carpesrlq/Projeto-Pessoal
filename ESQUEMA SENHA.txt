@@ -1,0 +1,66 @@
+#include <Keypad.h>
+
+const byte ROWS = 4;
+const byte COLS = 4;
+
+char keys[ROWS][COLS] = {
+  {'1', '2', '3', 'A'},
+  {'4', '5', '6', 'B'},
+  {'7', '8', '9', 'C'},
+  {'*', '0', '#', 'D'}
+};
+
+byte rowPins[ROWS] = {9, 8, 7, 6};
+byte colPins[COLS] = {5, 4, 3, 2};
+
+Keypad keypad = Keypad(makeKeymap(keys), rowPins, colPins, ROWS, COLS);
+
+String senha = "1234"; // senha correta
+bool sistemaLigado = false;
+
+void setup() {
+  // inicializa o monitor serial
+  Serial.begin(9600);
+
+  // inicializa o teclado
+  keypad.setDebounceTime(50);
+}
+
+void loop() {
+  // verifica se o sistema está ligado
+  if (sistemaLigado) {
+    // verifica se um movimento foi detectado
+    // e captura a imagem, se necessário
+    // ...
+
+    // verifica se o botão de desligar foi pressionado
+    // e desliga o sistema, se necessário
+    // ...
+  } else {
+    // aguarda a entrada da senha
+    char key = keypad.getKey();
+    if (key != NO_KEY) {
+      Serial.print("Tecla digitada: ");
+      Serial.println(key);
+
+      // adiciona a tecla digitada à senha temporária
+      static String senhaTemporaria;
+      senhaTemporaria += key;
+
+      // verifica se a senha foi completada
+      if (senhaTemporaria.length() == senha.length()) {
+        // compara a senha temporária com a senha correta
+        if (senhaTemporaria == senha) {
+          // senha correta: ativa o sistema
+          Serial.println("Senha correta!");
+          sistemaLigado = true;
+          senhaTemporaria = "";
+        } else {
+          // senha incorreta: exibe mensagem de erro
+          Serial.println("Senha incorreta!");
+          senhaTemporaria = "";
+        }
+      }
+    }
+  }
+}
